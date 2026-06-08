@@ -5,6 +5,7 @@ const MALAYSIAN_PHONE_REGEX = /^(\+?60|0)(1[0-9])[0-9]{7,8}$/
 export const Orders: CollectionConfig = {
   slug: 'orders',
   admin: {
+    group: 'Bookings',
     useAsTitle: 'customerName',
     defaultColumns: ['customerName', 'email', 'paymentStatus', 'totalPaid', 'createdAt'],
     description: 'Sales ledger. Orders are created programmatically via the checkout API.',

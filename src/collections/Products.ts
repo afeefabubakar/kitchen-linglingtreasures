@@ -5,6 +5,7 @@ export const Products: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'basePrice', 'updatedAt'],
+    group: 'Menu',
   },
   access: {
     read: () => true,

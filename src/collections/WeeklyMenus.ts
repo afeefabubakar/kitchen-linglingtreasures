@@ -36,6 +36,7 @@ export const WeeklyMenus: CollectionConfig = {
     ],
   },
   admin: {
+    group: 'Menu',
     useAsTitle: 'startDate',
     defaultColumns: ['startDate', 'deliveryDate', 'status', 'updatedAt'],
     description: 'Schedule weekly menus. Only one menu should be set to "active" at a time.',
