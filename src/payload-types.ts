@@ -69,6 +69,9 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    products: Product;
+    'weekly-menus': WeeklyMenu;
+    orders: Order;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +81,9 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    'weekly-menus': WeeklyMenusSelect<false> | WeeklyMenusSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -163,6 +169,131 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  /**
+   * The name of the food item as it appears on the menu.
+   */
+  title: string;
+  /**
+   * A description of the food item shown to customers.
+   */
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Price in Malaysian Ringgit (MYR). e.g. 8.50
+   */
+  basePrice: number;
+  /**
+   * Product image shown on the menu card.
+   */
+  image: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Schedule weekly menus. Only one menu should be set to "active" at a time.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "weekly-menus".
+ */
+export interface WeeklyMenu {
+  id: number;
+  /**
+   * The day this week's menu goes live.
+   */
+  startDate: string;
+  /**
+   * The deadline for customers to place orders (inclusive).
+   */
+  orderCutoffDate: string;
+  /**
+   * The date the lunchboxes will be delivered to the drop-off location.
+   */
+  deliveryDate: string;
+  /**
+   * Select up to 2 food items for this week. Each item has its own stock limit.
+   */
+  menuItems: {
+    /**
+     * The food item to include in this week's menu.
+     */
+    product: number | Product;
+    /**
+     * Maximum number of boxes available for this item this week.
+     */
+    stockLimit: number;
+    id?: string | null;
+  }[];
+  /**
+   * Only one menu should be "Active" at a time. Set to "Draft" while preparing, "Archived" when the week has passed.
+   */
+  status: 'draft' | 'active' | 'archived';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Sales ledger. Orders are created programmatically via the checkout API.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  customerName: string;
+  email: string;
+  /**
+   * Malaysian format — starts with 01x or +601x.
+   */
+  phone: string;
+  /**
+   * The food item ordered.
+   */
+  product: number | Product;
+  /**
+   * The weekly menu this order belongs to.
+   */
+  weeklyMenu: number | WeeklyMenu;
+  /**
+   * Number of lunchboxes ordered.
+   */
+  quantity: number;
+  /**
+   * Total amount charged in MYR.
+   */
+  totalPaid: number;
+  /**
+   * Hardcoded delivery drop-off point. Single location for Phase 1.
+   */
+  dropOffLocation: 'SK_PROU_SCHOOL_1';
+  /**
+   * Updated automatically by the payment webhook.
+   */
+  paymentStatus: 'pending' | 'paid' | 'failed';
+  /**
+   * The bill/transaction reference ID returned by the payment gateway.
+   */
+  gatewayBillId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -192,6 +323,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'weekly-menus';
+        value: number | WeeklyMenu;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -274,6 +417,55 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  basePrice?: T;
+  image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "weekly-menus_select".
+ */
+export interface WeeklyMenusSelect<T extends boolean = true> {
+  startDate?: T;
+  orderCutoffDate?: T;
+  deliveryDate?: T;
+  menuItems?:
+    | T
+    | {
+        product?: T;
+        stockLimit?: T;
+        id?: T;
+      };
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  customerName?: T;
+  email?: T;
+  phone?: T;
+  product?: T;
+  weeklyMenu?: T;
+  quantity?: T;
+  totalPaid?: T;
+  dropOffLocation?: T;
+  paymentStatus?: T;
+  gatewayBillId?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
