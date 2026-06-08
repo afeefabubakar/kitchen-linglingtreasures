@@ -72,6 +72,7 @@ export interface Config {
     products: Product;
     'weekly-menus': WeeklyMenu;
     orders: Order;
+    locations: Location;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +85,7 @@ export interface Config {
     products: ProductsSelect<false> | ProductsSelect<true>;
     'weekly-menus': WeeklyMenusSelect<false> | WeeklyMenusSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
+    locations: LocationsSelect<false> | LocationsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -278,9 +280,9 @@ export interface Order {
    */
   totalPaid: number;
   /**
-   * Hardcoded delivery drop-off point. Single location for Phase 1.
+   * The drop-off delivery location selected by the customer.
    */
-  dropOffLocation: 'SK_PROU_SCHOOL_1';
+  dropOffLocation: number | Location;
   /**
    * Updated automatically by the payment webhook.
    */
@@ -289,6 +291,25 @@ export interface Order {
    * The bill/transaction reference ID returned by the payment gateway.
    */
   gatewayBillId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Drop-off delivery locations. Active locations are shown to customers at checkout.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations".
+ */
+export interface Location {
+  id: number;
+  /**
+   * The full display name of the drop-off location.
+   */
+  name: string;
+  /**
+   * Only active locations are available for customers to select at checkout. Deactivate instead of deleting to preserve order history.
+   */
+  isActive: boolean;
   updatedAt: string;
   createdAt: string;
 }
@@ -335,6 +356,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'orders';
         value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'locations';
+        value: number | Location;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -464,6 +489,16 @@ export interface OrdersSelect<T extends boolean = true> {
   dropOffLocation?: T;
   paymentStatus?: T;
   gatewayBillId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations_select".
+ */
+export interface LocationsSelect<T extends boolean = true> {
+  name?: T;
+  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
 }

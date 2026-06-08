@@ -10,6 +10,7 @@ export type CheckoutInput = {
   phone: string
   productId: number
   weeklyMenuId: number
+  locationId: number
   quantity: number
 }
 
@@ -28,7 +29,7 @@ export type CheckoutResult =
  *  3. Payment gateway redirect URL generation
  */
 export async function processCheckout(input: CheckoutInput): Promise<CheckoutResult> {
-  const { customerName, email, phone, productId, weeklyMenuId, quantity } = input
+  const { customerName, email, phone, productId, weeklyMenuId, locationId, quantity } = input
 
   const payload = await getPayload({ config: configPromise })
 
@@ -135,7 +136,7 @@ export async function processCheckout(input: CheckoutInput): Promise<CheckoutRes
       weeklyMenu: weeklyMenuId,
       quantity,
       totalPaid,
-      dropOffLocation: 'SK_PROU_SCHOOL_1',
+      dropOffLocation: locationId,
       paymentStatus: 'pending',
     },
   })

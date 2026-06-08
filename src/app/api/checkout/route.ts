@@ -25,6 +25,8 @@ export async function POST(req: NextRequest) {
   const { customerName, email, phone, productId, weeklyMenuId, quantity } =
     body as Partial<CheckoutInput>
 
+  const { locationId } = body as Partial<CheckoutInput>
+
   if (!customerName || typeof customerName !== 'string') {
     return NextResponse.json({ error: 'customerName is required.' }, { status: 400 })
   }
@@ -40,12 +42,15 @@ export async function POST(req: NextRequest) {
   if (!weeklyMenuId || typeof weeklyMenuId !== 'number') {
     return NextResponse.json({ error: 'weeklyMenuId is required.' }, { status: 400 })
   }
+  if (!locationId || typeof locationId !== 'number') {
+    return NextResponse.json({ error: 'locationId is required.' }, { status: 400 })
+  }
   if (!quantity || typeof quantity !== 'number' || quantity < 1) {
     return NextResponse.json({ error: 'quantity must be a positive number.' }, { status: 400 })
   }
 
   // ── Core checkout logic ─────────────────────────────────────────────────────
-  const result = await processCheckout({ customerName, email, phone, productId, weeklyMenuId, quantity })
+  const result = await processCheckout({ customerName, email, phone, productId, weeklyMenuId, locationId, quantity })
 
   if (!result.success) {
     const statusMap: Record<string, number> = {

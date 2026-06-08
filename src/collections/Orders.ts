@@ -82,18 +82,11 @@ export const Orders: CollectionConfig = {
     },
     {
       name: 'dropOffLocation',
-      type: 'select',
+      type: 'relationship',
+      relationTo: 'locations',
       required: true,
-      defaultValue: 'SK_PROU_SCHOOL_1',
-      options: [
-        {
-          // TODO: Update label with the confirmed school name
-          label: 'SK Prou School',
-          value: 'SK_PROU_SCHOOL_1',
-        },
-      ],
       admin: {
-        description: 'Hardcoded delivery drop-off point. Single location for Phase 1.',
+        description: 'The drop-off delivery location selected by the customer.',
         position: 'sidebar',
       },
     },
