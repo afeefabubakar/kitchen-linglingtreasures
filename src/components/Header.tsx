@@ -5,9 +5,11 @@ import Link from 'next/link'
 import { ShoppingBag, Sprout } from 'lucide-react'
 
 import { useCart } from '@/context/CartContext'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 export function Header() {
-  const { cartCount } = useCart()
+  const { cartCount, setIsCartOpen } = useCart()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/20 bg-background/80 backdrop-blur-md">
@@ -32,15 +34,18 @@ export function Header() {
         </Link>
 
         {/* Cart */}
-        <button
+        <Button
+          onClick={() => setIsCartOpen(true)}
+          variant="outline"
+          size="icon"
+          className="relative rounded-full h-11 w-11 shadow-sm hover:bg-secondary hover:text-primary border-border cursor-pointer group active:scale-95 transition-all"
           aria-label="Shopping Cart"
-          className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground transition-all duration-300 hover:border-primary hover:bg-secondary hover:text-primary active:scale-95 shadow-sm cursor-pointer group"
         >
           <ShoppingBag className="h-5 w-5 transition-transform duration-300 group-hover:scale-105" />
-          <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-extrabold text-accent-foreground shadow-sm">
+          <Badge className="absolute -top-1 -right-1 h-5 min-w-[20px] px-1 flex items-center justify-center rounded-full bg-accent hover:bg-accent text-[11px] font-extrabold text-accent-foreground shadow-sm">
             {cartCount}
-          </span>
-        </button>
+          </Badge>
+        </Button>
       </div>
     </header>
   )

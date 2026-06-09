@@ -16,6 +16,8 @@ const inter = Inter({
   display: 'swap',
 })
 
+import { CartSheet } from '@/components/CartSheet'
+
 export const metadata = {
   description: 'Gourmet lunchbox pre-order service.',
   title: 'LinglingKitchen',
@@ -28,6 +30,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en" className={`${lora.variable} ${inter.variable}`} suppressHydrationWarning>
       <body>
         <CartProvider>
+          <CartSheet />
           <main>{children}</main>
         </CartProvider>
       </body>

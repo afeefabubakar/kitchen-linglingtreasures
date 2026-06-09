@@ -3,6 +3,8 @@
 import React from 'react'
 import { useCart } from '@/context/CartContext'
 import type { WeeklyMenu, Product, Media } from '@/payload-types'
+import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
 interface MenuProps {
   menuItems: WeeklyMenu['menuItems']
@@ -56,10 +58,12 @@ export function Menu({ menuItems }: MenuProps) {
               {/* Product Picture */}
               <div className="relative w-full aspect-video overflow-hidden bg-secondary/30">
                 {imageUrl ? (
-                  <img
+                  <Image
                     src={imageUrl}
                     alt={product.title}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground font-sans text-sm">
@@ -83,19 +87,21 @@ export function Menu({ menuItems }: MenuProps) {
                     RM {product.basePrice.toFixed(2)}
                   </span>
 
-                  <button
+                  <Button
                     onClick={() =>
                       addToCart({
                         id: product.id,
                         title: product.title,
                         price: product.basePrice,
                         image: imageUrl,
+                        stockLimit: item.stockLimit,
                       })
                     }
-                    className="px-6 py-2.5 bg-primary text-primary-foreground font-bold rounded-full hover:bg-primary/95 text-xs transition-all duration-200 active:scale-95 shadow-sm shadow-primary/10 cursor-pointer"
+                    size="sm"
+                    className="rounded-full font-bold cursor-pointer active:scale-95 shadow-sm shadow-primary/10"
                   >
                     Add to Cart
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
