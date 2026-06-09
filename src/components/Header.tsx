@@ -4,7 +4,11 @@ import React from 'react'
 import Link from 'next/link'
 import { ShoppingBag, Sprout } from 'lucide-react'
 
+import { useCart } from '@/context/CartContext'
+
 export function Header() {
+  const { cartCount } = useCart()
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/20 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
@@ -34,7 +38,7 @@ export function Header() {
         >
           <ShoppingBag className="h-5 w-5 transition-transform duration-300 group-hover:scale-105" />
           <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-extrabold text-accent-foreground shadow-sm">
-            0
+            {cartCount}
           </span>
         </button>
       </div>

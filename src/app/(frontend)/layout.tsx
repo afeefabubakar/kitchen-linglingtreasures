@@ -1,9 +1,11 @@
 import React from 'react'
 import { Lora, Inter } from 'next/font/google'
 import './styles.css'
+import { CartProvider } from '@/context/CartContext'
 
 const lora = Lora({
   subsets: ['latin'],
+  style: ['normal', 'italic'],
   variable: '--font-serif',
   display: 'swap',
 })
@@ -16,7 +18,7 @@ const inter = Inter({
 
 export const metadata = {
   description: 'Gourmet lunchbox pre-order service.',
-  title: 'LingLingKitchen',
+  title: 'LinglingKitchen',
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
@@ -25,7 +27,9 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable}`} suppressHydrationWarning>
       <body>
-        <main>{children}</main>
+        <CartProvider>
+          <main>{children}</main>
+        </CartProvider>
       </body>
     </html>
   )
