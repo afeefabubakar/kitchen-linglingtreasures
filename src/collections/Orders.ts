@@ -111,7 +111,16 @@ export const Orders: CollectionConfig = {
         },
       ],
       admin: {
-        description: 'Updated automatically by the payment webhook.',
+        description: 'Status of the payment. Can be verified manually by admin for QR receipt uploads.',
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'paymentReceipt',
+      type: 'relationship',
+      relationTo: 'media',
+      admin: {
+        description: 'Uploaded payment screenshot or bank receipt.',
         position: 'sidebar',
       },
     },

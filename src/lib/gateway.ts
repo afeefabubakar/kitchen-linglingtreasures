@@ -10,6 +10,8 @@
  *   - 'billplz'
  */
 
+import { createHmac } from 'crypto'
+
 export type GatewayCheckoutInput = {
   orderId: number
   customerName: string
@@ -195,8 +197,6 @@ function verifyBillplzSignature(payload: Record<string, unknown>): boolean {
   // The raw signature must be passed through as part of the payload object
   // from the webhook route handler.
   // Reference: https://www.billplz.com/api#x-signature
-  import('crypto').then(() => {}) // ensure crypto is available (Node built-in)
-
   const secret = process.env.PAYMENT_WEBHOOK_SECRET
   if (!secret) return false
 
@@ -211,9 +211,6 @@ function verifyBillplzSignature(payload: Record<string, unknown>): boolean {
     .map((field) => `${field}${payload[field] ?? ''}`)
     .join('|')
 
-  // Dynamic import to keep this synchronous-looking; replace with top-level import
-  // if using a Node.js 18+ runtime (which Vercel supports).
-  const { createHmac } = require('crypto')
   const expectedSig: string = createHmac('sha256', secret).update(message).digest('hex')
 
   return receivedSig === expectedSig

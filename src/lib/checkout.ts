@@ -12,6 +12,7 @@ export type CheckoutInput = {
   weeklyMenuId: number
   locationId: number
   quantity: number
+  paymentReceiptId?: number
 }
 
 export type CheckoutResult =
@@ -29,7 +30,7 @@ export type CheckoutResult =
  *  3. Payment gateway redirect URL generation
  */
 export async function processCheckout(input: CheckoutInput): Promise<CheckoutResult> {
-  const { customerName, email, phone, productId, weeklyMenuId, locationId, quantity } = input
+  const { customerName, email, phone, productId, weeklyMenuId, locationId, quantity, paymentReceiptId } = input
 
   const payload = await getPayload({ config: configPromise })
 
@@ -138,10 +139,23 @@ export async function processCheckout(input: CheckoutInput): Promise<CheckoutRes
       totalPaid,
       dropOffLocation: locationId,
       paymentStatus: 'pending',
+      paymentReceipt: paymentReceiptId || undefined,
     },
   })
 
-  // ── 7. Generate gateway redirect URL ──────────────────────────────────────
+  // ── 7. Resolve payment redirection or gateway ─────────────────────────────
+  const paymentMethod = process.env.PAYMENT_METHOD || 'manual'
+  if (paymentMethod === 'manual') {
+    // For manual QR payments, redirect directly to the order confirmation page.
+    // The admin will verify the receipt image stored in paymentReceipt.
+    return {
+      success: true,
+      redirectUrl: `/order-confirmation?orderId=${newOrder.id}`,
+      orderId: newOrder.id,
+    }
+  }
+
+  // Gateway flow (ToyyibPay/Billplz)
   let gatewayResult: GatewayCheckoutResult
   try {
     gatewayResult = await buildGatewayPayload({

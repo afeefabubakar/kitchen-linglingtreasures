@@ -284,9 +284,13 @@ export interface Order {
    */
   dropOffLocation: number | Location;
   /**
-   * Updated automatically by the payment webhook.
+   * Status of the payment. Can be verified manually by admin for QR receipt uploads.
    */
   paymentStatus: 'pending' | 'paid' | 'failed';
+  /**
+   * Uploaded payment screenshot or bank receipt.
+   */
+  paymentReceipt?: (number | null) | Media;
   /**
    * The bill/transaction reference ID returned by the payment gateway.
    */
@@ -488,6 +492,7 @@ export interface OrdersSelect<T extends boolean = true> {
   totalPaid?: T;
   dropOffLocation?: T;
   paymentStatus?: T;
+  paymentReceipt?: T;
   gatewayBillId?: T;
   updatedAt?: T;
   createdAt?: T;
