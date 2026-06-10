@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Sprout } from 'lucide-react'
+import { Award, Clock, ShoppingBag, Sprout, Utensils } from 'lucide-react'
 
 import { useCart } from '@/context/CartContext'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,7 @@ export function Header() {
   const { cartCount, setIsCartOpen } = useCart()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/20 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
         {/* Logo */}
         <Link
@@ -22,14 +22,30 @@ export function Header() {
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:bg-primary/90">
             <Sprout className="h-6 w-6" />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-1">
             <span className="font-serif text-2xl font-bold tracking-tight text-foreground leading-none">
               Lingling
               <span className="text-primary font-normal font-serif italic ml-0.5">Kitchen</span>
             </span>
-            <span className="text-[10px] tracking-widest text-muted-foreground uppercase mt-1 font-semibold">
-              healthy lunchbox
-            </span>
+            <div className="flex flex-row gap-2">
+              <div className="flex items-center gap-2">
+                {/* <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Utensils className="h-3 w-3" />
+                </div> */}
+                <span className="text-xs font-bold text-foreground">
+                  Healthy & Premium Lunchbox
+                </span>
+              </div>
+              {/* <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Award className="h-3 w-3" />
+                </div>
+                <span className="text-xs font-bold text-foreground">Premium</span>
+              </div> */}
+            </div>
+            {/* <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-foreground">Pre-order Only</span>
+            </div> */}
           </div>
         </Link>
 
