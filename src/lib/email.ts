@@ -14,21 +14,23 @@ export async function sendEmail({
   subject: string
   html: string
 }): Promise<boolean> {
-  const plunkApiKey = process.env.PLUNK_API_KEY
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@kitchen.linglingtreasures.com'
+  const rawApiKey = process.env.PLUNK_API_KEY
+  const plunkApiKey = rawApiKey ? rawApiKey.trim().replace(/^["']|["']$/g, '') : undefined
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@linglingkitchen.com'
   const senderEmail = process.env.SENDER_EMAIL || adminEmail
 
-  console.log('KEY:', plunkApiKey)
-
   if (!plunkApiKey) {
-    console.log('\n========================================================================')
-    console.log(`[MOCK EMAIL SENT]`)
-    console.log(`To:      ${to}`)
-    console.log(`Subject: ${subject}`)
-    console.log(`Body Snippet: ${html.substring(0, 300)}...`)
-    console.log('========================================================================\n')
+    console.log('\n========================================================================');
+    console.log(`[MOCK EMAIL SENT]`);
+    console.log(`To:      ${to}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`Body Snippet: ${html.substring(0, 300)}...`);
+    console.log('========================================================================\n');
     return true
   }
+
+  // Debugging log to confirm the key's length and prefix inside Vercel/server logs
+  console.log(`[Plunk Email] Sending using key starting with "${plunkApiKey.substring(0, 7)}" (total length: ${plunkApiKey.length})`)
 
   try {
     const res = await fetch('https://next-api.useplunk.com/v1/send', {
