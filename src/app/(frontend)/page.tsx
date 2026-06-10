@@ -7,7 +7,7 @@ import { Menu } from '@/components/Menu'
 
 export default async function HomePage() {
   const payload = await getPayload({ config: configPromise })
-  
+
   // Fetch the active weekly menu and resolve products & media (depth 2)
   const activeMenus = await payload.find({
     collection: 'weekly-menus',
@@ -23,8 +23,8 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <Header />
-      <main className="flex-grow flex flex-col py-6">
-        <Hero />
+      <main className="grow flex flex-col py-6">
+        {/* <Hero /> */}
         {menuItems.length > 0 ? (
           <Menu menuItems={menuItems} />
         ) : (
@@ -35,9 +35,11 @@ export default async function HomePage() {
           </div>
         )}
       </main>
-      <footer className="py-8 border-t border-border/10 text-center text-xs text-muted-foreground">
+      <footer className="py-8 border-t border-border/10 text-center text-muted-foreground">
         <div className="max-w-7xl mx-auto px-6">
-          <p>© {new Date().getFullYear()} LingLing Treasures. All rights reserved.</p>
+          <p className="text-xs">
+            © {new Date().getFullYear()} LinglingKitchen. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>
