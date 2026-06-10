@@ -25,7 +25,7 @@ function renderDescription(description: any): string {
 }
 
 export function Menu({ menuItems }: MenuProps) {
-  const { addToCart } = useCart()
+  const { cart, addToCart, setIsCartOpen } = useCart()
 
   return (
     <section className="py-16 px-6 max-w-7xl mx-auto">
@@ -87,21 +87,32 @@ export function Menu({ menuItems }: MenuProps) {
                     RM {product.basePrice.toFixed(2)}
                   </span>
 
-                  <Button
-                    onClick={() =>
-                      addToCart({
-                        id: product.id,
-                        title: product.title,
-                        price: product.basePrice,
-                        image: imageUrl,
-                        stockLimit: item.stockLimit,
-                      })
-                    }
-                    size="sm"
-                    className="rounded-full font-bold cursor-pointer active:scale-95 shadow-sm shadow-primary/10"
-                  >
-                    Add to Cart
-                  </Button>
+                  {cart.some((cartItem) => cartItem.id === product.id) ? (
+                    <Button
+                      onClick={() => setIsCartOpen(true)}
+                      size="sm"
+                      variant="outline"
+                      className="rounded-full font-bold cursor-pointer active:scale-95 shadow-sm border-primary/30 text-primary hover:bg-primary/5 transition-all duration-200"
+                    >
+                      View Cart
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() =>
+                        addToCart({
+                          id: product.id,
+                          title: product.title,
+                          price: product.basePrice,
+                          image: imageUrl,
+                          stockLimit: item.stockLimit,
+                        })
+                      }
+                      size="sm"
+                      className="rounded-full font-bold cursor-pointer active:scale-95 shadow-sm shadow-primary/10 transition-all duration-200"
+                    >
+                      Add to Cart
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
