@@ -4,6 +4,7 @@ import {
   buildOrderReceivedHtml,
   buildOrderConfirmedHtml,
   buildAdminNotificationHtml,
+  buildOrderFailedHtml,
 } from '../lib/email'
 
 const MALAYSIAN_PHONE_REGEX = /^(\+?60|0)(1[0-9])[0-9]{7,8}$/
@@ -101,6 +102,8 @@ export const Orders: CollectionConfig = {
             // 3. Customer Order Confirmed Email (transitioned from pending -> paid)
             const wasPaid = previousDoc?.paymentStatus === 'paid'
             const isPaid = doc?.paymentStatus === 'paid'
+            const wasFailed = previousDoc?.paymentStatus === 'failed'
+            const isFailed = doc?.paymentStatus === 'failed'
 
             if (!wasPaid && isPaid) {
               const confirmHtml = buildOrderConfirmedHtml({
@@ -117,6 +120,20 @@ export const Orders: CollectionConfig = {
                 to: doc.email,
                 subject: `Payment Verified! Order #${doc.id} Confirmed`,
                 html: confirmHtml,
+              })
+            } else if (!wasFailed && isFailed) {
+              const failedHtml = buildOrderFailedHtml({
+                customerName: doc.customerName,
+                orderId: doc.id,
+                productTitle: product?.title || 'Lunchbox Special',
+                quantity: doc.quantity,
+                totalPaid: doc.totalPaid,
+              })
+
+              await sendEmail({
+                to: doc.email,
+                subject: `Payment Verification Failed - Order #${doc.id}`,
+                html: failedHtml,
               })
             }
           }
