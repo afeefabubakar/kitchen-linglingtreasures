@@ -17,9 +17,9 @@ export function Hero({ onPreOrderClick, onViewMenuClick }: HeroProps) {
         {/* Subtle decorative background gradient */}
         <div className="absolute inset-0 bg-linear-to-tr from-secondary via-transparent to-accent/5 pointer-events-none" />
 
-        <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center z-10">
+        <div className="relative flex flex-col-reverse md:flex-row gap-12 lg:gap-8 items-center z-10">
           {/* Left Column: Text Content & CTAs */}
-          <div className="lg:col-span-6 space-y-8 max-w-2xl">
+          <div className="lg:basis-1/2 space-y-8 max-w-2xl">
             {/* Main Heading */}
             <h1>
               Handcrafted <br />
@@ -34,7 +34,7 @@ export function Hero({ onPreOrderClick, onViewMenuClick }: HeroProps) {
             </p>
 
             {/* Badges / Micro-selling points */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-primary/10 max-w-md">
+            <div className="grid md:grid-cols-3 gap-4 pt-6 border-t border-primary/10 max-w-md">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                   <Utensils className="h-4 w-4" />
@@ -57,7 +57,7 @@ export function Hero({ onPreOrderClick, onViewMenuClick }: HeroProps) {
           </div>
 
           {/* Right Column: Placeholder Image */}
-          <div className="lg:col-span-6 flex items-center justify-center">
+          <div className="lg:basis-1/2 flex items-center justify-center">
             <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden shadow-2xl border-4 border-white rotate-2 hover:rotate-0 hover:scale-[1.02] transition-all duration-500">
               <Image
                 src="/images/hero_lunchbox_placeholder.png"
