@@ -49,12 +49,16 @@ export function Menu({ menuItems }: MenuProps) {
           const imageUrl =
             typeof product.image === 'object' && product.image?.url ? product.image.url : undefined
           const descriptionText = renderDescription(product.description)
+          const isSingleItem = menuItems.length === 1
 
           return (
             <div
               key={product.id || index}
-              className="flex flex-col bg-white rounded-3xl border border-border/20 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full md:max-w-lg grow"
+              className={`flex flex-col bg-white rounded-3xl border border-border/20 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full ${
+                isSingleItem ? 'md:max-w-2xl' : 'md:w-[calc(50%-16px)]'
+              }`}
             >
+
               {/* Product Picture */}
               <div className="relative w-full aspect-video overflow-hidden bg-secondary/30">
                 {imageUrl ? (
