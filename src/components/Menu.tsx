@@ -28,9 +28,9 @@ export function Menu({ menuItems }: MenuProps) {
   const { cart, addToCart, setIsCartOpen } = useCart()
 
   return (
-    <section className="py-16 px-6 max-w-7xl mx-auto">
+    <section className="px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Menu Heading & Subtitle */}
-      <div className="text-center max-w-2xl mx-auto mb-12">
+      <div className="text-center max-w-2xl mx-auto mb-10">
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
           Discover Our Menu
         </h2>
@@ -40,8 +40,8 @@ export function Menu({ menuItems }: MenuProps) {
         </p>
       </div>
 
-      {/* 2-Column Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto">
+      {/* Centered Flex Container */}
+      <div className="flex flex-col md:flex-row flex-wrap justify-center gap-8 mx-auto">
         {menuItems.map((item, index) => {
           const product = item.product as Product
           if (!product || typeof product !== 'object') return null
@@ -53,7 +53,7 @@ export function Menu({ menuItems }: MenuProps) {
           return (
             <div
               key={product.id || index}
-              className="flex flex-col bg-white rounded-3xl border border-border/20 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="flex flex-col bg-white rounded-3xl border border-border/20 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full md:max-w-lg grow"
             >
               {/* Product Picture */}
               <div className="relative w-full aspect-video overflow-hidden bg-secondary/30">
@@ -73,11 +73,11 @@ export function Menu({ menuItems }: MenuProps) {
               </div>
 
               {/* Product Info */}
-              <div className="p-6 flex flex-col flex-grow">
+              <div className="p-6 flex flex-col grow">
                 <h3 className="font-serif text-2xl font-bold text-foreground mb-2">
                   {product.title}
                 </h3>
-                <p className="font-sans text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
+                <p className="font-sans text-muted-foreground text-sm leading-relaxed mb-6 grow">
                   {descriptionText}
                 </p>
 
