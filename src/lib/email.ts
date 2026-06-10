@@ -26,7 +26,7 @@ export async function sendEmail({ to, subject, html }: SendEmailParams): Promise
   }
 
   try {
-    const res = await fetch('https://api.useplunk.com/v1/send', {
+    const res = await fetch('https://next-api.useplunk.com/v1/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
