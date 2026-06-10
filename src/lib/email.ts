@@ -15,7 +15,16 @@ export async function sendEmail({
   html: string
 }): Promise<boolean> {
   const rawApiKey = process.env.PLUNK_API_KEY
-  const plunkApiKey = rawApiKey ? rawApiKey.trim().replace(/^["']|["']$/g, '') : undefined
+  let plunkApiKey = rawApiKey ? rawApiKey.trim() : undefined
+  
+  // Self-healing: if the key has quotes or is part of a "KEY=value" paste, extract just the "sk_..." key
+  if (plunkApiKey) {
+    const skMatch = plunkApiKey.match(/(sk_[a-zA-Z0-9]+)/)
+    if (skMatch) {
+      plunkApiKey = skMatch[1]
+    }
+  }
+
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@linglingkitchen.com'
   const senderEmail = process.env.SENDER_EMAIL || adminEmail
 
@@ -31,10 +40,15 @@ export async function sendEmail({
 
   // Debugging log to confirm the key's length and prefix inside Vercel/server logs
   console.log(`[Plunk Email] Sending using key starting with "${plunkApiKey.substring(0, 7)}" (total length: ${plunkApiKey.length})`)
+  
+  // Inspect all character codes of the key to verify there are absolutely no hidden/corrupted characters
+  const charCodes = Array.from(plunkApiKey).map(c => c.charCodeAt(0)).join(',')
+  console.log(`[Plunk Email] Key char codes: ${charCodes}`)
 
   try {
     const res = await fetch('https://next-api.useplunk.com/v1/send', {
       method: 'POST',
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${plunkApiKey}`,
@@ -101,7 +115,7 @@ function wrapLayout(content: string): string {
  */
 export function buildOrderReceivedHtml(params: {
   customerName: string
-  orderId: number
+  orderId: string | number
   productTitle: string
   quantity: number
   totalPaid: number
@@ -157,7 +171,7 @@ export function buildOrderReceivedHtml(params: {
  */
 export function buildOrderConfirmedHtml(params: {
   customerName: string
-  orderId: number
+  orderId: string | number
   productTitle: string
   quantity: number
   totalPaid: number
@@ -214,7 +228,7 @@ export function buildAdminNotificationHtml(params: {
   customerName: string
   email: string
   phone: string
-  orderId: number
+  orderId: string | number
   productTitle: string
   quantity: number
   totalPaid: number
@@ -272,7 +286,7 @@ export function buildAdminNotificationHtml(params: {
  */
 export function buildOrderFailedHtml(params: {
   customerName: string
-  orderId: number
+  orderId: string | number
   productTitle: string
   quantity: number
   totalPaid: number

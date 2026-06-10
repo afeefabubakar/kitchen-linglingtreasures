@@ -13,7 +13,7 @@
 import { createHmac } from 'crypto'
 
 export type GatewayCheckoutInput = {
-  orderId: number
+  orderId: string | number
   customerName: string
   email: string
   phone: string

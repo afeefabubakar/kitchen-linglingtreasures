@@ -25,6 +25,38 @@ export const Orders: CollectionConfig = {
     delete: ({ req }) => Boolean(req.user),
   },
   hooks: {
+    beforeValidate: [
+      async ({ data, operation, req }) => {
+        if (operation === 'create' && data) {
+          if (!data.id) {
+            let uniqueId = ''
+            let isUnique = false
+            const alphabet = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'
+            
+            while (!isUnique) {
+              uniqueId = ''
+              for (let i = 0; i < 8; i++) {
+                uniqueId += alphabet.charAt(Math.floor(Math.random() * alphabet.length))
+              }
+              
+              const existing = await req.payload.find({
+                collection: 'orders',
+                where: {
+                  id: { equals: uniqueId },
+                },
+                limit: 1,
+              })
+              
+              if (existing.docs.length === 0) {
+                isUnique = true
+              }
+            }
+            data.id = uniqueId
+          }
+        }
+        return data
+      },
+    ],
     afterChange: [
       async ({ doc, previousDoc, operation, req }) => {
         try {
@@ -146,6 +178,13 @@ export const Orders: CollectionConfig = {
   },
 
   fields: [
+    {
+      name: 'id',
+      type: 'text',
+      admin: {
+        description: 'Unique 8-character order reference code.',
+      },
+    },
     {
       name: 'customerName',
       type: 'text',

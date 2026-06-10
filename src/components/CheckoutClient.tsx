@@ -110,7 +110,7 @@ export function CheckoutClient() {
     setIsLoading(true)
 
     try {
-      const orderIds: number[] = []
+      const orderIds: string[] = []
 
       // Submit checkout requests in sequence for each cart item
       for (const item of cart) {

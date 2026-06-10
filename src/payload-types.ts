@@ -256,7 +256,10 @@ export interface WeeklyMenu {
  * via the `definition` "orders".
  */
 export interface Order {
-  id: number;
+  /**
+   * Unique 8-character order reference code.
+   */
+  id: string;
   customerName: string;
   email: string;
   /**
@@ -359,7 +362,7 @@ export interface PayloadLockedDocument {
       } | null)
     | ({
         relationTo: 'orders';
-        value: number | Order;
+        value: string | Order;
       } | null)
     | ({
         relationTo: 'locations';
@@ -483,6 +486,7 @@ export interface WeeklyMenusSelect<T extends boolean = true> {
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
+  id?: T;
   customerName?: T;
   email?: T;
   phone?: T;

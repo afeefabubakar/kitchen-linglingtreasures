@@ -16,7 +16,7 @@ export type CheckoutInput = {
 }
 
 export type CheckoutResult =
-  | { success: true; redirectUrl: string; orderId: number }
+  | { success: true; redirectUrl: string; orderId: string }
   | { success: false; error: string; code: 'CLOSED' | 'SOLD_OUT' | 'INVALID' | 'SERVER_ERROR' }
 
 /**
