@@ -58,7 +58,6 @@ export function Menu({ menuItems }: MenuProps) {
                 isSingleItem ? 'md:max-w-2xl' : 'md:w-[calc(50%-16px)]'
               }`}
             >
-
               {/* Product Picture */}
               <div className="relative w-full aspect-video overflow-hidden bg-secondary/30">
                 {imageUrl ? (
@@ -68,6 +67,7 @@ export function Menu({ menuItems }: MenuProps) {
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover transition-transform duration-500 hover:scale-105"
+                    loading="eager"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground font-sans text-sm">
