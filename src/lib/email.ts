@@ -18,6 +18,8 @@ export async function sendEmail({
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@kitchen.linglingtreasures.com'
   const senderEmail = process.env.SENDER_EMAIL || adminEmail
 
+  console.log('KEY:', plunkApiKey)
+
   if (!plunkApiKey) {
     console.log('\n========================================================================')
     console.log(`[MOCK EMAIL SENT]`)
