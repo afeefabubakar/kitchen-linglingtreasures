@@ -1,34 +1,21 @@
 import type { Order, Product, Location, WeeklyMenu } from '@/payload-types'
+const PLUNK_API_KEY = process.env.PLUNK_API_KEY
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@linglingkitchen.com'
+const SENDER_EMAIL = process.env.SENDER_EMAIL || ADMIN_EMAIL
+
+interface SendEmailParams {
+  to: string
+  subject: string
+  html: string
+}
 
 /**
  * Sends an email using the Plunk API.
  * If PLUNK_API_KEY is not defined in the environment, it falls back to mocking
  * the email by logging the contents to the console (useful for local development).
  */
-export async function sendEmail({
-  to,
-  subject,
-  html,
-}: {
-  to: string
-  subject: string
-  html: string
-}): Promise<boolean> {
-  const rawApiKey = process.env.PLUNK_API_KEY
-  let plunkApiKey = rawApiKey ? rawApiKey.trim() : undefined
-  
-  // Self-healing: if the key has quotes or is part of a "KEY=value" paste, extract just the "sk_..." key
-  if (plunkApiKey) {
-    const skMatch = plunkApiKey.match(/(sk_[a-zA-Z0-9]+)/)
-    if (skMatch) {
-      plunkApiKey = skMatch[1]
-    }
-  }
-
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@linglingkitchen.com'
-  const senderEmail = process.env.SENDER_EMAIL || adminEmail
-
-  if (!plunkApiKey) {
+export async function sendEmail({ to, subject, html }: SendEmailParams): Promise<boolean> {
+  if (!PLUNK_API_KEY) {
     console.log('\n========================================================================');
     console.log(`[MOCK EMAIL SENT]`);
     console.log(`To:      ${to}`);
@@ -38,26 +25,18 @@ export async function sendEmail({
     return true
   }
 
-  // Debugging log to confirm the key's length and prefix inside Vercel/server logs
-  console.log(`[Plunk Email] Sending using key starting with "${plunkApiKey.substring(0, 7)}" (total length: ${plunkApiKey.length})`)
-  
-  // Inspect all character codes of the key to verify there are absolutely no hidden/corrupted characters
-  const charCodes = Array.from(plunkApiKey).map(c => c.charCodeAt(0)).join(',')
-  console.log(`[Plunk Email] Key char codes: ${charCodes}`)
-
   try {
     const res = await fetch('https://next-api.useplunk.com/v1/send', {
       method: 'POST',
-      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${plunkApiKey}`,
+        Authorization: `Bearer ${PLUNK_API_KEY}`,
       },
       body: JSON.stringify({
         to,
         subject,
         body: html,
-        from: senderEmail,
+        from: SENDER_EMAIL,
         subscribed: true,
       }),
     })
