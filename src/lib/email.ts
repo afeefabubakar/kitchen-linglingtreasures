@@ -1,28 +1,30 @@
 import type { Order, Product, Location, WeeklyMenu } from '@/payload-types'
 
-const PLUNK_API_KEY = process.env.PLUNK_API_KEY
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@linglingkitchen.com'
-const SENDER_EMAIL = process.env.SENDER_EMAIL || ADMIN_EMAIL
-
-interface SendEmailParams {
-  to: string
-  subject: string
-  html: string
-}
-
 /**
  * Sends an email using the Plunk API.
  * If PLUNK_API_KEY is not defined in the environment, it falls back to mocking
  * the email by logging the contents to the console (useful for local development).
  */
-export async function sendEmail({ to, subject, html }: SendEmailParams): Promise<boolean> {
-  if (!PLUNK_API_KEY) {
-    console.log('\n========================================================================');
-    console.log(`[MOCK EMAIL SENT]`);
-    console.log(`To:      ${to}`);
-    console.log(`Subject: ${subject}`);
-    console.log(`Body Snippet: ${html.substring(0, 300)}...`);
-    console.log('========================================================================\n');
+export async function sendEmail({
+  to,
+  subject,
+  html,
+}: {
+  to: string
+  subject: string
+  html: string
+}): Promise<boolean> {
+  const plunkApiKey = process.env.PLUNK_API_KEY
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@kitchen.linglingtreasures.com'
+  const senderEmail = process.env.SENDER_EMAIL || adminEmail
+
+  if (!plunkApiKey) {
+    console.log('\n========================================================================')
+    console.log(`[MOCK EMAIL SENT]`)
+    console.log(`To:      ${to}`)
+    console.log(`Subject: ${subject}`)
+    console.log(`Body Snippet: ${html.substring(0, 300)}...`)
+    console.log('========================================================================\n')
     return true
   }
 
@@ -31,13 +33,13 @@ export async function sendEmail({ to, subject, html }: SendEmailParams): Promise
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${PLUNK_API_KEY}`,
+        Authorization: `Bearer ${plunkApiKey}`,
       },
       body: JSON.stringify({
         to,
         subject,
         body: html,
-        from: SENDER_EMAIL,
+        from: senderEmail,
         subscribed: true,
       }),
     })
@@ -215,7 +217,7 @@ export function buildAdminNotificationHtml(params: {
   locationName: string
 }) {
   const adminPanelUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/collections/orders/${params.orderId}`
-  
+
   return wrapLayout(`
     <h2 style="font-family: Georgia, serif; font-size: 20px; font-weight: bold; margin-top: 0; margin-bottom: 16px; color: #d97706;">Receipt Verification Required</h2>
     <p style="margin: 0 0 24px 0; font-size: 14px; color: #4a554d; line-height: 1.6;">A new customer order has been placed with manual receipt upload. Please verify the bank transfer receipt in the admin panel.</p>
@@ -306,4 +308,3 @@ export function buildOrderFailedHtml(params: {
     </div>
   `)
 }
-
