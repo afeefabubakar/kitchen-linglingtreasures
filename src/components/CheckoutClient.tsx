@@ -20,7 +20,7 @@ import {
   Phone,
   MapPin,
 } from 'lucide-react'
-import Image from 'next/image'
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
 
 interface LocationData {
   id: number
@@ -151,7 +151,7 @@ export function CheckoutClient() {
 
   if (!isPageMounted) {
     return (
-      <div className="flex-grow flex items-center justify-center p-6 bg-secondary/15 min-h-[70vh]">
+      <div className="grow flex items-center justify-center p-6 bg-secondary/15 min-h-[70vh]">
         <div className="font-sans text-sm text-muted-foreground animate-pulse">
           Loading checkout...
         </div>
@@ -161,7 +161,7 @@ export function CheckoutClient() {
 
   if (cart.length === 0) {
     return (
-      <div className="flex-grow flex items-center justify-center p-6 bg-secondary/15 min-h-[70vh]">
+      <div className="grow flex items-center justify-center p-6 bg-secondary/15 min-h-[70vh]">
         <Card className="w-full max-w-md border border-border/10 shadow-lg rounded-3xl bg-white p-8 text-center space-y-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground mx-auto">
             <ShoppingBag className="h-6 w-6" />
@@ -232,10 +232,11 @@ export function CheckoutClient() {
                       <div className="flex gap-3 items-center min-w-0">
                         <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-secondary/20 shrink-0 border border-border/10">
                           {item.image ? (
-                            <Image
+                            <ImageWithSkeleton
                               src={item.image}
                               alt={item.title}
                               fill
+                              containerClassName="w-full h-full"
                               className="object-cover"
                             />
                           ) : (

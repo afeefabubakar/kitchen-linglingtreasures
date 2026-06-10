@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { MapPin, Navigation, ArrowRight, Utensils, Award, Clock } from 'lucide-react'
-import Image from 'next/image'
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
 
 interface HeroProps {
   onPreOrderClick?: () => void
@@ -59,11 +59,12 @@ export function Hero({ onPreOrderClick, onViewMenuClick }: HeroProps) {
           {/* Right Column: Placeholder Image */}
           <div className="lg:basis-1/2 flex items-center justify-center">
             <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden shadow-2xl border-4 border-white rotate-2 hover:rotate-0 hover:scale-[1.02] transition-all duration-500">
-              <Image
+              <ImageWithSkeleton
                 src="/images/hero_lunchbox_placeholder.png"
                 alt="Handcrafted gourmet lunchbox with salmon, rice, and broccoli"
                 width={800}
                 height={800}
+                containerClassName="w-full h-full"
                 className="w-full h-full object-cover"
                 priority
               />

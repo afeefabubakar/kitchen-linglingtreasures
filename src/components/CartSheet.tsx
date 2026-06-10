@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import type { Product } from '@/payload-types'
-import Image from 'next/image'
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
 
 export function CartSheet() {
   const router = useRouter()
@@ -110,7 +110,13 @@ export function CartSheet() {
                     {/* Col 1: Product Image */}
                     <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-secondary/20 shrink-0 border border-border/10">
                       {item.image ? (
-                        <Image src={item.image} alt={item.title} fill className="object-cover" />
+                        <ImageWithSkeleton
+                          src={item.image}
+                          alt={item.title}
+                          fill
+                          containerClassName="w-full h-full"
+                          className="object-cover"
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-[10px] text-muted-foreground">
                           No Image
@@ -200,7 +206,13 @@ export function CartSheet() {
                         {/* Image Thumbnail */}
                         <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-secondary/20 shrink-0 border border-border/10">
                           {imageUrl ? (
-                            <Image src={imageUrl} alt={product.title} fill className="object-cover" />
+                            <ImageWithSkeleton
+                              src={imageUrl}
+                              alt={product.title}
+                              fill
+                              containerClassName="w-full h-full"
+                              className="object-cover"
+                            />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-[8px] text-muted-foreground">
                               No Image

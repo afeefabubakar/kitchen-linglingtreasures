@@ -6,6 +6,8 @@ import type { WeeklyMenu, Product, Media } from '@/payload-types'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton'
+
 interface MenuProps {
   menuItems: WeeklyMenu['menuItems']
 }
@@ -23,6 +25,7 @@ function renderDescription(description: any): string {
     ? description
     : 'Handcrafted weekly special cooked fresh for you.'
 }
+
 
 export function Menu({ menuItems }: MenuProps) {
   const { cart, addToCart, setIsCartOpen } = useCart()
@@ -61,13 +64,14 @@ export function Menu({ menuItems }: MenuProps) {
               {/* Product Picture */}
               <div className="relative w-full aspect-video overflow-hidden bg-secondary/30">
                 {imageUrl ? (
-                  <Image
+                  <ImageWithSkeleton
                     src={imageUrl}
                     alt={product.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-500 hover:scale-105"
-                    loading="eager"
+                    containerClassName="w-full h-full"
+                    skeletonClassName="rounded-none"
+                    className="object-cover transition-all duration-500 hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground font-sans text-sm">
@@ -75,6 +79,7 @@ export function Menu({ menuItems }: MenuProps) {
                   </div>
                 )}
               </div>
+
 
               {/* Product Info */}
               <div className="p-6 flex flex-col grow">
