@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 
 export interface CartItem {
   id: number
@@ -34,8 +34,30 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('lingling_cart')
+    if (stored) {
+      try {
+        setCart(JSON.parse(stored))
+      } catch (err) {
+        console.error('Failed to parse cart from localStorage:', err)
+      }
+    }
+    setIsLoaded(true)
+  }, [])
+
+  // Sync cart to localStorage whenever it changes, after initial load is complete
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('lingling_cart', JSON.stringify(cart))
+    }
+  }, [cart, isLoaded])
 
   const addToCart = (item: {
+
     id: number
     title: string
     price: number
