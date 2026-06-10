@@ -62,7 +62,7 @@ export function CartSheet() {
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
-      <SheetContent className="flex flex-col p-0 gap-0 border-l border-border/10 bg-white">
+      <SheetContent className="data-[side=right]:w-full data-[side=right]:sm:max-w-md flex flex-col p-0 gap-0 border-l border-border/10 bg-white">
         {/* Drawer Header */}
         <SheetHeader className="px-6 py-5 border-b border-border/20 shrink-0 flex-row items-center justify-between pr-14 space-y-0">
           <div className="flex items-center gap-2 leading-none">
@@ -100,9 +100,9 @@ export function CartSheet() {
                 size="sm"
                 className="py-0 border border-border/10 shadow-sm bg-card hover:shadow-md transition-all duration-200"
               >
-                <CardContent className="flex items-start gap-3 p-3 sm:p-4">
+                <CardContent className="flex items-center gap-3 p-3 sm:p-4">
                   {/* Col 1: Product Image */}
-                  <div className="relative w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-2xl overflow-hidden bg-secondary/20 shrink-0 border border-border/10">
+                  <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-secondary/20 shrink-0 border border-border/10">
                     {item.image ? (
                       <Image src={item.image} alt={item.title} fill className="object-cover" />
                     ) : (
@@ -113,28 +113,34 @@ export function CartSheet() {
                   </div>
 
                   {/* Col 2: Details & Actions */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
-                    {/* Top: Title & Price */}
+                  <div className="flex-1 min-w-0 flex flex-col justify-between h-20 sm:h-24 py-0.5">
+                    {/* Top: Title */}
                     <div>
-                      <h4 className="font-sans font-bold text-foreground text-sm sm:text-base leading-snug">
+                      <h4 className="font-sans font-bold text-foreground text-sm sm:text-base leading-snug line-clamp-2">
                         {item.title}
                       </h4>
-                      <span className="block font-sans text-xs sm:text-sm font-bold text-primary mt-1">
-                        RM {item.price.toFixed(2)} {item.quantity > 1 && `(x${item.quantity})`}
-                      </span>
                     </div>
 
-                    {/* Bottom: Quantity Selector & Trash Button */}
-                    <div className="flex items-center justify-between mt-2.5 gap-2">
+                    {/* Bottom: Quantity Selector & Price */}
+                    <div className="flex items-center justify-between gap-2">
                       {/* Quantity Counter */}
                       <div className="flex items-center border border-border/60 rounded-full bg-secondary/10 px-1 py-0.5 w-fit">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          disabled={item.quantity <= 1}
-                          className="p-1 rounded-full text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                          aria-label="Decrease quantity"
+                          onClick={() => {
+                            if (item.quantity === 1) {
+                              removeFromCart(item.id)
+                            } else {
+                              updateQuantity(item.id, item.quantity - 1)
+                            }
+                          }}
+                          className="p-1 rounded-full text-muted-foreground hover:text-rose-600 transition-colors cursor-pointer"
+                          aria-label={item.quantity === 1 ? "Remove item" : "Decrease quantity"}
                         >
-                          <Minus className="h-3.5 w-3.5" />
+                          {item.quantity === 1 ? (
+                            <Trash2 className="h-3.5 w-3.5" />
+                          ) : (
+                            <Minus className="h-3.5 w-3.5" />
+                          )}
                         </button>
                         <span className="font-sans font-bold text-xs text-foreground w-5 text-center">
                           {item.quantity}
@@ -149,14 +155,12 @@ export function CartSheet() {
                         </button>
                       </div>
 
-                      {/* Trash Icon Button */}
-                      <button
-                        onClick={() => removeFromCart(item.id)}
-                        className="p-1.5 rounded-full text-muted-foreground hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                        aria-label="Remove item"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      {/* Price Container */}
+                      <div className="flex items-center">
+                        <span className="font-sans text-xs sm:text-sm font-bold text-primary">
+                          RM {(item.price * item.quantity).toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
