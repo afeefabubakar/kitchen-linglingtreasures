@@ -1,4 +1,10 @@
 import type { CollectionConfig } from 'payload'
+import {
+  sendEmail,
+  buildOrderReceivedHtml,
+  buildOrderConfirmedHtml,
+  buildAdminNotificationHtml,
+} from '../lib/email'
 
 const MALAYSIAN_PHONE_REGEX = /^(\+?60|0)(1[0-9])[0-9]{7,8}$/
 
@@ -17,6 +23,111 @@ export const Orders: CollectionConfig = {
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),
   },
+  hooks: {
+    afterChange: [
+      async ({ doc, previousDoc, operation, req }) => {
+        try {
+          const payload = req.payload
+
+          // Fetch related entities (avoiding populated object problems)
+          const product =
+            typeof doc.product === 'object' && doc.product !== null
+              ? doc.product
+              : await payload.findByID({ collection: 'products', id: doc.product })
+
+          const location =
+            typeof doc.dropOffLocation === 'object' && doc.dropOffLocation !== null
+              ? doc.dropOffLocation
+              : await payload.findByID({ collection: 'locations', id: doc.dropOffLocation })
+
+          const weeklyMenu =
+            typeof doc.weeklyMenu === 'object' && doc.weeklyMenu !== null
+              ? doc.weeklyMenu
+              : await payload.findByID({ collection: 'weekly-menus', id: doc.weeklyMenu })
+
+          // Format delivery date nicely (e.g. 15 Jun 2026)
+          const deliveryDateRaw = weeklyMenu?.deliveryDate
+          let deliveryDateStr = 'TBC'
+          if (deliveryDateRaw) {
+            try {
+              deliveryDateStr = new Date(deliveryDateRaw).toLocaleDateString('en-MY', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                timeZone: 'Asia/Kuala_Lumpur',
+              })
+            } catch {
+              deliveryDateStr = String(deliveryDateRaw)
+            }
+          }
+
+          if (operation === 'create') {
+            // 1. Customer Order Received Email
+            const customerHtml = buildOrderReceivedHtml({
+              customerName: doc.customerName,
+              orderId: doc.id,
+              productTitle: product?.title || 'Lunchbox Special',
+              quantity: doc.quantity,
+              totalPaid: doc.totalPaid,
+              locationName: location?.name || 'School Drop-off',
+              deliveryDate: deliveryDateStr,
+            })
+            
+            await sendEmail({
+              to: doc.email,
+              subject: `Order #${doc.id} Received - Verification Pending`,
+              html: customerHtml,
+            })
+
+            // 2. Admin Notification Email
+            const adminHtml = buildAdminNotificationHtml({
+              customerName: doc.customerName,
+              email: doc.email,
+              phone: doc.phone,
+              orderId: doc.id,
+              productTitle: product?.title || 'Lunchbox Special',
+              quantity: doc.quantity,
+              totalPaid: doc.totalPaid,
+              locationName: location?.name || 'School Drop-off',
+            })
+
+            const adminEmailAddress = process.env.ADMIN_EMAIL || 'admin@linglingkitchen.com'
+            await sendEmail({
+              to: adminEmailAddress,
+              subject: `[ACTION REQUIRED] New Order #${doc.id} - Receipt verification`,
+              html: adminHtml,
+            })
+          } else if (operation === 'update') {
+            // 3. Customer Order Confirmed Email (transitioned from pending -> paid)
+            const wasPaid = previousDoc?.paymentStatus === 'paid'
+            const isPaid = doc?.paymentStatus === 'paid'
+
+            if (!wasPaid && isPaid) {
+              const confirmHtml = buildOrderConfirmedHtml({
+                customerName: doc.customerName,
+                orderId: doc.id,
+                productTitle: product?.title || 'Lunchbox Special',
+                quantity: doc.quantity,
+                totalPaid: doc.totalPaid,
+                locationName: location?.name || 'School Drop-off',
+                deliveryDate: deliveryDateStr,
+              })
+
+              await sendEmail({
+                to: doc.email,
+                subject: `Payment Verified! Order #${doc.id} Confirmed`,
+                html: confirmHtml,
+              })
+            }
+          }
+        } catch (err) {
+          // Catch all errors so email failures don't block order creations or status saves
+          console.error('Error executing email notification hook on Order:', err)
+        }
+      },
+    ],
+  },
+
   fields: [
     {
       name: 'customerName',
